@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Healthy-Help — Nutrition Suggestions</title>
+  <meta name="description" content="Educational site that suggests healthy foods and a simple meal plan for common nutrient deficiencies. Not medical advice." />
+
+  <style>
+    :root{
+      --bg: #dff4ff;
+      --card: #ffffff;
+      --accent: #2b7a78;
+      --muted: #6b7280;
+      --glass: rgba(255,255,255,0.7);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background: var(--bg);
+      font-family: Inter, ui-sans-serif, system-ui;
+      padding:24px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .container{
+      width:100%;
+      max-width:980px;
+      background:var(--card);
+      border-radius:14px;
+      box-shadow:0 8px 30px rgba(15,23,42,0.08);
+      padding:28px;
+      display:grid;
+      grid-template-columns: 1fr 380px;
+      gap:20px;
+    }
+
+    header{grid-column:1/-1; display:flex; gap:16px; align-items:center}
+    .logo{background:var(--accent); color:white; font-weight:700; padding:12px 14px; border-radius:10px}
+    h1{margin:0; font-size:1.3rem}
+    p.lead{margin:0; color:var(--muted); font-size:0.95rem}
+
+    main{padding-top:6px}
+    aside{padding:16px; background:linear-gradient(180deg, rgba(43,122,120,0.04), rgba(43,122,120,0.02)); border-radius:10px}
+
+    form{display:flex; flex-direction:column; gap:12px}
+    label{font-size:0.9rem; color:#0f172a}
+    input[type="text"], select{padding:10px 12px; border-radius:8px; border:1px solid #e6eef0; font-size:0.95rem}
+    .row{display:flex; gap:10px}
+    .row > *{flex:1}
+
+    button{background:var(--accent); color:white; border:none; padding:10px 14px; border-radius:10px; cursor:pointer; font-weight:600}
+    button:active{transform:translateY(1px)}
+
+    .result-card{background:var(--glass); padding:14px; border-radius:10px; border:1px solid rgba(15,23,42,0.04)}
+    .foods{display:grid; grid-template-columns:repeat(2, 1fr); gap:10px}
+
+    footer{grid-column:1/-1; margin-top:8px; color:var(--muted); font-size:0.85rem}
+
+    .nutrition-img{
+      width: 100%;
+      border-radius: 10px;
+      margin: 12px 0;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    @media (max-width:880px){
+      .container{grid-template-columns:1fr; padding:18px}
+      aside{order:2}
+    }
+  </style>
+</head>
+<body>
+  <div class="container" role="application">
+    <header>
+      <div class="logo" aria-hidden>HH</div>
+      <div>
+        <h1>Healthy-Help</h1>
+        <p class="lead">Educational food suggestions for common nutrient deficiencies. <strong>Not medical advice.</strong></p>
+      </div>
+    </header>
+
+    <main>
+      <!-- Added nutrition-related image -->
+      <img src="https://upload.wikimedia.org/wikipedia/commons/6/6f/Healthy_food.jpg" alt="Healthy nutrition foods" class="nutrition-img">
+
+      <section aria-labelledby="form-heading">
+        <h2 id="form-heading" style="font-size:1.05rem;margin:0 0 8px 0">Tell us a bit about yourself</h2>
+        <form id="deficiency-form" method="POST" action="/submit">
+          <label for="name">Name (optional)</label>
+          <input id="name" name="name" type="text" placeholder="How would you like us to call you?">
+
+          <label for="deficiency">Choose the nutrient deficiency</label>
+          <select id="deficiency" name="deficiency" required>
+            <option value="">— select a nutrient —</option>
+            <option value="iron">Iron</option>
+            <option value="calcium">Calcium</option>
+            <option value="vitaminD">Vitamin D</option>
+            <option value="vitaminC">Vitamin C</option>
+            <option value="vitaminB12">Vitamin B12</option>
+            <option value="magnesium">Magnesium</option>
+            <option value="iodine">Iodine</option>
+          </select>
+
+          <div class="row">
+            <div>
+              <label for="age">Age range (optional)</label>
+              <select id="age" name="age">
+                <option value="">Not specified</option>
+                <option value="child">Child (0–12)</option>
+                <option value="teen">Teen (13–17)</option>
+                <option value="adult">Adult (18–64)</option>
+                <option value="senior">Senior (65+)</option>
+              </select>
+            </div>
+            <div>
+              <label for="diet">Diet preference (optional)</label>
+              <select id="diet" name="diet">
+                <option value="any">No preference</option>
+                <option value="vegetarian">Vegetarian</option>
+                <option value="vegan">Vegan</option>
+                <option value="pescatarian">Pescatarian</option>
+                <option value="omnivore">Omnivore</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display:flex; gap:8px; margin-top:6px">
+            <button type="submit">Get healthy-food suggestions</button>
+            <button type="button" id="clear-btn" style="background:#e6eef0;color:#0f172a">Clear</button>
+          </div>
+        </form>
+
+        <div id="output" style="margin-top:16px; display:none" aria-live="polite"></div>
+      </section>
+
+      <section style="margin-top:12px">
+        <div class="result-card">
+          <strong>Important:</strong>
+          <p style="margin:8px 0 0 0; color:var(--muted)">This website provides general, educational nutrition information only. It does <em>not</em> diagnose or treat conditions. Please consult a qualified healthcare professional for personalized advice.</p>
+        </div>
+      </section>
+    </main>
+
+    <aside>
+      <h3 style="margin-top:0">How this works</h3>
+      <p style="color:var(--muted); font-size:0.95rem">Choose a nutrient and (optionally) your age and diet style. The site will show common foods that are good sources of the chosen nutrient and a gentle sample day-of-meals. All suggestions are educational.</p>
+    </aside>
+
+    <footer>
+      <div style="display:flex; justify-content:space-between; gap:12px; align-items:center">
+        <div>Created for learning — no medical claims.</div>
+        <div style="color:var(--muted)">© Healthy-Help</div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Simple backend simulation (client-side)
+    // In a real backend, you'd handle this with Node, Flask, etc.
+    document.getElementById("deficiency-form").addEventListener("submit", function(e){
+      e.preventDefault();
+
+      const formData = new FormData(e.target);
+      fetch("/submit", {
+        method: "POST",
+        body: formData
+      }).then(() => alert("Form submitted to backend! (Simulation)"));
+    });
+
+    document.getElementById('clear-btn').addEventListener('click', function(){
+      document.getElementById('deficiency-form').reset();
+      const out = document.getElementById('output');
+      out.style.display = 'none';
+      out.innerHTML = '';
+    });
+  </script>
+</body>
+</html>
